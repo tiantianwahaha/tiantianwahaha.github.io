@@ -1,0 +1,359 @@
+﻿/* 全局设置 */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: "Microsoft Yahei", sans-serif;
+    /* 防止移动端出现不必要的滚动条 */
+    overflow-x: hidden; 
+}
+
+/* Section 通用样式 */
+.section {
+    text-align: center;
+    color: #fff;
+    position: relative;
+    /* 默认字体稍微调小一点，大屏幕靠h1撑大 */
+    font-size: 20px; 
+}
+
+/* 居中容器 */
+.center-content {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    z-index: 10;
+}
+
+/* 标题样式 */
+h1 {
+    color: #396;
+    font-weight: 100;
+    font-size: 50px;
+    margin: 20px 0;
+    line-height: 1.2;
+}
+
+/* 计时器容器 */
+#clockdiv {
+    font-family: sans-serif;
+    display: inline-block;
+    font-weight: 100;
+    text-align: center;
+    margin: 0 auto;
+}
+
+/* 计时器数字框 */
+.timer-box {
+    padding: 10px;
+    border-radius: 3px;
+    background: #00BF96;
+    display: inline-block;
+    margin: 5px;
+}
+
+.timer-box > span {
+    padding: 15px;
+    border-radius: 3px;
+    background: #00816A;
+    display: block;
+    font-size: 50px; /* 数字大小 */
+}
+
+.smalltext {
+    padding-top: 5px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* 地图容器 */
+#mapid {
+    width: 90%;
+    height: 90%; /* 使用百分比，由父容器决定高度 */
+    margin: 0 auto;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+/* 蛋糕和音频容器 */
+.cake-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.birthday-text {
+    font-size: 40px;
+    margin-top: 20px;
+    font-family: cursive;
+}
+
+/* 嵌入的 SVG 大小 */
+#cake {
+    width: 200px;
+    height: auto;
+    max-width: 80vw; /* 移动端限制最大宽度 */
+}
+
+/* ===========================
+   移动端适配 (Media Queries)
+   =========================== */
+@media screen and (max-width: 768px) {
+    /* 标题文字变小 */
+    h1 {
+        font-size: 28px;
+        margin: 10px 0;
+    }
+
+    /* 计时器数字变小 */
+    .timer-box {
+        padding: 5px;
+        margin: 2px;
+    }
+
+    .timer-box > span {
+        font-size: 24px;
+        padding: 8px;
+    }
+
+    .smalltext {
+        font-size: 12px;
+    }
+    
+    /* 生日祝福语变小 */
+    .birthday-text {
+        font-size: 24px;
+    }
+    
+    /* 调整蛋糕大小以适应小屏幕 */
+    #cake {
+        width: 150px;
+    }
+    
+    /* 调整音频控件大小 */
+    audio {
+        width: 80%;
+        margin-top: 10px;
+    }
+}
+
+/* ============================================== Candle (保留未修改)
+*/
+.velas {
+    background: #ffffff;
+    border-radius: 10px;
+    position: absolute;
+    top: 55%; /* 修改为相对蛋糕容器定位 */
+    left: 50%;
+    margin-left: -2.5px;
+    margin-top: -50px; /* 根据蛋糕位置微调 */
+    width: 5px;
+    height: 35px;
+    transform: translateY(-300px); /* 保持原有动画初始状态 */
+    backface-visibility: hidden;
+    animation: in 500ms 6s ease-out forwards;
+    z-index: 5; /* 确保在蛋糕上方 */
+}
+
+/* 注意：由于之前是绝对定位在body上，现在为了适配，建议 .velas 放在 .cake-container 内相对定位
+   如果原始代码中 .velas 是相对于整个页面定位的，在响应式中会很难对齐。
+   这里通过调整 CSS 稍微优化了定位逻辑，但保留了原有动画 keyframes。
+*/
+
+.velas:after,
+.velas:before {
+    background: rgba(255, 0, 0, 0.4);
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 2.22222222px;
+}
+
+.velas:after {
+    top: 25%;
+    left: 0;
+}
+
+.velas:before {
+    top: 45%;
+    left: 0;
+}
+
+/* ============================================== Fire (保留未修改)
+*/
+.fuego {
+    border-radius: 100%;
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    margin-left: -2.2px;
+    width: 6.66666667px;
+    height: 18px;
+}
+
+.fuego:nth-child(1) { animation: fuego 2s 6.5s infinite; }
+.fuego:nth-child(2) { animation: fuego 1.5s 6.5s infinite; }
+.fuego:nth-child(3) { animation: fuego 1s 6.5s infinite; }
+.fuego:nth-child(4) { animation: fuego 0.5s 6.5s infinite; }
+.fuego:nth-child(5) { animation: fuego 0.2s 6.5s infinite; }
+
+/* ============================================== Animation Fire (保留未修改)
+*/
+@keyframes fuego {
+    0%, 100% {
+        background: rgba(254, 248, 97, 0.5);
+        box-shadow: 0 0 40px 10px rgba(248, 233, 209, 0.2);
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        background: rgba(255, 50, 0, 0.1);
+        box-shadow: 0 0 40px 20px rgba(248, 233, 209, 0.2);
+        transform: translateY(-20px) scale(0);
+    }
+}
+
+@keyframes in {
+    to { transform: translateY(0); }
+}
+
+/* ============================================== List (保留原有代码，虽然似乎未使用)
+*/
+.container {
+    width: 90%;
+    max-width: 400px;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    max-height: 800px;
+    overflow-y: auto;
+}
+
+#list-header {
+    background: #ff6f61;
+    color: white;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+}
+
+#task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 700px;
+    overflow-y: auto;
+}
+
+#task-list li {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    color: #333;
+    font-size: 18px;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+#task-list li:hover {
+    background: #ffefea;
+}
+
+#task-list input[type="checkbox"] {
+    margin-right: 15px;
+    transform: scale(1.3);
+    cursor: pointer;
+}
+
+#task-list input[type="checkbox"]:checked + span {
+    text-decoration: line-through;
+    color: #777;
+    opacity: 0.7;
+}
+/* ===========================
+   登录遮罩样式
+   =========================== */
+#login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #FFFAF0; /* 保持与第一页背景一致 */
+    z-index: 99999; /* 确保层级最高，盖住所有内容 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-box {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 80%;
+    max-width: 300px;
+}
+
+.login-box input {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 2px solid #eee;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.login-box input:focus {
+    border-color: #396;
+}
+
+.login-box button {
+    background: #396; /* 主题绿色 */
+    color: white;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(51, 153, 102, 0.2);
+    transition: transform 0.2s;
+}
+
+.login-box button:active {
+    transform: scale(0.95);
+}
+
+#error-msg {
+    color: #ff6f61;
+    margin-top: 10px;
+    font-size: 14px;
+    display: none; /* 默认隐藏 */
+}
+
+/* 错误时的抖动动画 */
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+.shake {
+    animation: shake 0.3s;
+    border-color: #ff6f61 !important;
+}

@@ -1,0 +1,265 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tongtong</title>
+
+    <link rel="stylesheet" href="css/animate.min.css" />
+    <link rel="stylesheet" href="css/jquery.fullPage.css">
+    <link rel="stylesheet" href="css/font-awesome.css">
+    <link rel="stylesheet" href="css/leaflet.css" />
+    <link rel="stylesheet" href="js/leaflet.awesome-markers.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery.fullPage.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script src="js/leaflet.awesome-markers.js"></script>
+    <script src="js/map.js"></script>
+
+	<script>
+	$(function(){
+		$('#dowebok').fullpage({
+			sectionsColor: ['#FFFAF0', '#4BBFC3', '#7BAABE', '#00ECB9'],
+			navigation: true,
+			// 这一行是为了解决地图触摸冲突
+			normalScrollElements: '#mapid',
+			// 确保内容垂直居中（可选，如果不想居中可改为 false）
+			verticalCentered: true
+		});
+	});
+	</script>
+	
+</head>
+
+<body>
+	<div id="login-overlay">
+		<div class="login-box">
+			<h2 style="color: #396; margin-bottom: 20px;">❤️ 请输入我们的暗号 ❤️</h2>
+			<input type="password" id="password-input" placeholder="请输入密码..." />
+			<br>
+			<button onclick="checkPassword()">开启惊喜</button>
+			<p id="error-msg">暗号不对哦，再想想？</p>
+		</div>
+	</div>
+
+    <div id="dowebok">
+        
+        <div class="section active">
+            <canvas id='cavs'></canvas>
+            <div class="center-content">
+                <div id="clockdiv">
+                    <h1>
+                        <strong>@wang 和 @tongtong</strong><br>
+                        <strong>的甜蜜时光</strong>
+                    </h1>
+                    <div class="timer-container">
+                        <div class="timer-box">
+                            <span class="days"></span>
+                            <div class="smalltext">天</div>
+                        </div>
+                        <div class="timer-box">
+                            <span class="hours"></span>
+                            <div class="smalltext">小时</div>
+                        </div>
+                        <div class="timer-box">
+                            <span class="minutes"></span>
+                            <div class="smalltext">分钟</div>
+                        </div>
+                        <div class="timer-box">
+                            <span class="seconds"></span>
+                            <div class="smalltext">秒</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div id="mapid"></div>
+        </div>
+	<!--
+        <div class="section">
+            <div class="cake-container">
+                <div class="velas">
+                    <div class="fuego"></div>
+                    <div class="fuego"></div>
+                    <div class="fuego"></div>
+                    <div class="fuego"></div>
+                    <div class="fuego"></div>
+                </div>
+                <embed id="cake" src="cake.svg" type="image/svg+xml" />
+                <p class="birthday-text">Happy 18th birthday!</p>
+                <audio controls="controls" loop="loop" id="bgmusic">
+                    <source id="song" src="birthday.mp3" type="audio/mpeg">
+                </audio>
+            </div>
+        </div>
+    </div>
+	-->
+    <script>
+        function getTimeRemaining(begintime) {
+            var t = Date.parse(new Date()) - Date.parse(begintime);
+            var seconds = Math.floor((t / 1000) % 60);
+            var minutes = Math.floor((t / 1000 / 60) % 60);
+            var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+            var days = Math.floor(t / (1000 * 60 * 60 * 24));
+            return {
+                'total': t,
+                'days': days,
+                'hours': hours,
+                'minutes': minutes,
+                'seconds': seconds
+            };
+        }
+
+        function initializeClock(id, begintime) {
+            var clock = document.getElementById(id);
+            var daysSpan = clock.querySelector('.days');
+            var hoursSpan = clock.querySelector('.hours');
+            var minutesSpan = clock.querySelector('.minutes');
+            var secondsSpan = clock.querySelector('.seconds');
+
+            function updateClock() {
+                var t = getTimeRemaining(begintime);
+                daysSpan.innerHTML = t.days;
+                hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
+                minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
+                secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
+            }
+
+            updateClock();
+            var timeinterval = setInterval(updateClock, 1000);
+        }
+
+        var lovetime = new Date("August 4, 2022 22:30:00");
+        initializeClock('clockdiv', lovetime);
+    </script>
+
+    <script>
+        var canvas = document.getElementById("cavs");
+        const WIDTH = window.innerWidth;
+        const HEIGHT = window.innerHeight;
+        canvas.setAttribute("width", WIDTH);
+        canvas.setAttribute("height", HEIGHT);
+        var context = canvas.getContext("2d");
+        var start = {
+            loves: [],
+            DURATION: 30,
+            begin: function () {
+                this.createLove();
+            },
+            createLove: function () {
+                for (var i = 0; i < WIDTH / 59; i++) {
+                    var love = new Love();
+                    this.loves.push(love);
+                }
+                setInterval(this.drawLove.bind(this), this.DURATION);
+            },
+            drawLove: function () {
+                context.clearRect(0, 0, WIDTH, HEIGHT);
+                for (var key in this.loves) {
+                    this.loves[key].draw();
+                }
+            }
+        };
+
+        function Love() {
+            var me = this;
+
+            function rand() {
+                me.maxScale = (Math.random() * 3.2 + 1.2) * WIDTH / 521;
+                me.curScale = 1.2 * WIDTH / 521;
+                me.x = Math.floor(Math.random() * WIDTH - 40);
+                me.y = Math.floor(HEIGHT - Math.random() * 200);
+                me.ColR = Math.floor(Math.random() * 255);
+                me.ColG = Math.floor(Math.random() * 255);
+                me.ColB = Math.floor(Math.random() * 255);
+                me.alpha = Math.random() * 0.2 + 0.8;
+                me.vector = Math.random() * 5 + 0.4;
+            }
+            (function () {
+                rand();
+            }());
+            me.draw = function () {
+                if (me.alpha < 0.01) rand();
+                if (me.curScale < me.maxScale) me.curScale += 0.3;
+                x = me.x;
+                y = me.y;
+                scale = me.curScale;
+                context.fillStyle = "rgba(" + me.ColR + "," + me.ColG + "," + me.ColB + "," + me.alpha + ")";
+                context.shadowBlur = 10;
+                context.shadowColor = "rgb(" + me.ColR + "," + me.ColG + "," + me.ColB + ")";
+                context.beginPath();
+                context.bezierCurveTo(x + 2.5 * scale, y + 2.5 * scale, x + 2.0 * scale, y, x, y);
+                context.bezierCurveTo(x - 3.0 * scale, y, x - 3.0 * scale, y + 3.5 * scale, x - 3.0 * scale, y + 3.5 * scale);
+                context.bezierCurveTo(x - 3.0 * scale, y + 5.5 * scale, x - 1.0 * scale, y + 7.7 * scale, x + 2.5 * scale, y + 9.5 * scale);
+                context.bezierCurveTo(x + 6.0 * scale, y + 7.7 * scale, x + 8.0 * scale, y + 5.5 * scale, x + 8.0 * scale, y + 3.5 * scale);
+                context.bezierCurveTo(x + 8.0 * scale, y + 3.5 * scale, x + 8.0 * scale, y, x + 5.0 * scale, y);
+                context.bezierCurveTo(x + 3.5 * scale, y, x + 2.5 * scale, y + 2.5 * scale, x + 2.5 * scale, y + 2.5 * scale);
+                context.fill();
+                context.closePath();
+                me.y -= me.vector;
+                me.alpha -= (me.vector / 2.9 * 3.5 / HEIGHT);
+            }
+        }
+        start.begin();
+    </script>
+	
+	<script>
+    async function sha256(message) {
+        const msgBuffer = new TextEncoder().encode(message);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        return hashHex;
+    }
+
+    async function checkPassword() {
+        var input = document.getElementById('password-input');
+        var errorMsg = document.getElementById('error-msg');
+        var overlay = document.getElementById('login-overlay');
+        var audio = document.getElementById('bgmusic');
+
+        // === 这里填密码的“指纹” (SHA-256) ===
+        var correctHash = "0b35b06a22779418f775a804f36485f7bc978071d1709ad263a68f4f18117b11"; 
+        // ===================================
+
+        // 计算用户输入的指纹
+        var userHash = await sha256(input.value);
+
+        if (userHash === correctHash) {
+            // 密码正确
+            overlay.style.transition = "opacity 0.5s";
+            overlay.style.opacity = "0";
+            setTimeout(function(){
+                overlay.style.display = "none";
+            }, 500);
+
+            if (audio) {
+                audio.play().catch(function(error) {
+                    console.log("播放失败:", error);
+                });
+            }
+        } else {
+            // 密码错误
+            errorMsg.style.display = "block";
+            input.value = ""; 
+            input.classList.add('shake');
+            setTimeout(function(){
+                input.classList.remove('shake');
+            }, 500);
+        }
+    }
+    
+    document.getElementById("password-input").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            checkPassword();
+        }
+    });
+</script>
+</body>
+
+</html>
